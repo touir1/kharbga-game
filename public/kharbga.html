@@ -1,0 +1,100 @@
+<html>
+<head>
+	<title>Kharbga</title>
+	<!--<link rel="stylesheet" href="node_modules/skeleton-css/css/skeleton.css">-->
+
+	<!-- main css-->
+	<link rel="stylesheet" href="public/css/style.css">
+</head>
+<body>
+	<div class="container" id="start-menu">
+	  	<div class="menu">
+		    <h1>Kharbga game</h1>
+		    <h3>How To Play</h3>
+		    <ol>
+		      	<li>Player 1: Create a new game by entering the username</li>
+		      	<li>Player 2: Enter another username and the room id that is displayed on first window.</li>
+		      	<li>Click on join game. </li>
+		    </ol>
+		    <h4>Create a new Game</h4>
+		    <input type="text" name="name" id="nameNew" placeholder="Enter your name" required>
+		    <button id="new">New Game</button>
+		    <br><br>
+		    <h4>Join an existing game</h4>
+		    <input type="text" name="name" id="nameJoin" placeholder="Enter your name" required>
+		    <input type="text" name="room" id="room" placeholder="Enter Game ID" required>
+		    <button id="join">Join Game</button>
+	  	</div>
+	</div>
+	<div class="centered hidden" id="game-starting">
+		
+		<div class="horizontal-center">
+			<h2 id="userHello"></h2>
+			<span id="result" class="win-result"></span>
+		</div>
+		<div id="dice-roll" class="horizontal-center">
+			<span class="dice" id="player_dice">&#9723;</span>
+		</div>
+		<div class="horizontal-center hidden" id="game-board">
+			<div id="player_1" class="inline-div" data-x="-1" data-y="-1">
+				<div class="circle color-p1" data-piece="p1" draggable="true" ondragstart="drag(event)" onmousedown="mouseDownPiece(event)" onmouseup="mouseUpPiece(event)" id="p1_1"></div>
+				<div class="circle color-p1" data-piece="p1" draggable="true" ondragstart="drag(event)" onmousedown="mouseDownPiece(event)" onmouseup="mouseUpPiece(event)" id="p1_2"></div>
+				<div class="circle color-p1" data-piece="p1" draggable="true" ondragstart="drag(event)" onmousedown="mouseDownPiece(event)" onmouseup="mouseUpPiece(event)" id="p1_3"></div>
+			</div>
+			<div class="inline-div">
+				<table class="grid" cellspacing="0">
+					<tr>
+						<td><div id="0_2" name="gameGrid" class="grid-cell" data-x="0" data-y="2" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+						<td><div id="1_2" name="gameGrid" class="grid-cell" data-x="1" data-y="2" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+						<td><div id="2_2" name="gameGrid" class="grid-cell" data-x="2" data-y="2" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+					</tr>
+					<tr>
+						<td><div id="0_1" name="gameGrid" class="grid-cell" data-x="0" data-y="1" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+						<td><div id="1_1" name="gameGrid" class="grid-cell" data-x="1" data-y="1" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+						<td><div id="2_1" name="gameGrid" class="grid-cell" data-x="2" data-y="1" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+					</tr>
+					<tr>
+						<td><div id="0_0" name="gameGrid" class="grid-cell" data-x="0" data-y="0" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+						<td><div id="1_0" name="gameGrid" class="grid-cell" data-x="1" data-y="0" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+						<td><div id="2_0" name="gameGrid" class="grid-cell" data-x="2" data-y="0" ondrop="drop(event)" ondragover="allowDrop(event)"></div></td>
+					</tr>
+				</table>
+			</div>
+			
+			<div id="player_2" class="inline-div" data-x="-1" data-y="-1">
+				<div class="circle color-p2" data-piece="p2" draggable="true" ondragstart="drag(event)" onmousedown="mouseDownPiece(event)" onmouseup="mouseUpPiece(event)" id="p2_1"></div>
+				<div class="circle color-p2" data-piece="p2" draggable="true" ondragstart="drag(event)" onmousedown="mouseDownPiece(event)" onmouseup="mouseUpPiece(event)" id="p2_2"></div>
+				<div class="circle color-p2" data-piece="p2" draggable="true" ondragstart="drag(event)" onmousedown="mouseDownPiece(event)" onmouseup="mouseUpPiece(event)" id="p2_3"></div>
+			</div>
+
+			<div class="horizontal-center">
+				Player turn: <span id="playerTurn"></span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal content -->
+	<div id="myModal" class="modal">
+
+  		<!-- Modal content -->
+  		<div class="modal-content">
+    		<!--<span class="close">&times;</span>-->
+    		<p id="modal-message">Do you want to play first or second?</p>
+    		<table id="modal-buttons">
+    			<tr>
+    				<td><button id="start-first-btn">First</button></td>
+    				<td><button id="start-second-btn">Second</button></td>
+    			</tr>
+    		</table>
+  		</div>
+
+</div>
+
+
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+	<!-- main script -->
+	<script src="public/js/main.js"></script>
+</body>
+</html>
