@@ -61,6 +61,10 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on('opponentName', function(data){
+		socket.broadcast.to(data.room).emit('opponentName', data);
+	});
+
 	socket.on('gameStart', function(data){
 		socket.broadcast.to(data.room).emit('gameStarted', {
 			room: data.room,

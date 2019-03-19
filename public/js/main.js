@@ -40,36 +40,60 @@
 		if(!thePlayer){
 			player_turn_id = player_turn_id ? 0 : 1;
 			if(player_turn_id){
-				playerTurnSpan.html("Player 1"+(parentheses? " ("+parentheses+")" : ""));
+				
 				playerTurnSpan.removeClass('text-color-p2');
 				playerTurnSpan.addClass('text-color-p1');
-				if(player == "p1") yourTurn = true;
-				else yourTurn = false;
+				if(player == "p1") {
+					yourTurn = true;
+					playerTurnSpan.html(playerName+(parentheses? " ("+parentheses+")" : ""));
+				}
+				else {
+					yourTurn = false;
+					playerTurnSpan.html(opponentName+(parentheses? " ("+parentheses+")" : ""));
+				}
 			}
 			else{
 				playerTurnSpan.html("Player 2"+(parentheses? " ("+parentheses+")" : ""));
 				playerTurnSpan.removeClass('text-color-p1');
 				playerTurnSpan.addClass('text-color-p2');
-				if(player == "p2") yourTurn = true;
-				else yourTurn = false;
+				if(player == "p2") {
+					yourTurn = true;
+					playerTurnSpan.html(playerName+(parentheses? " ("+parentheses+")" : ""));
+				}
+				else {
+					yourTurn = false;
+					playerTurnSpan.html(opponentName+(parentheses? " ("+parentheses+")" : ""));
+				}
 			}
 		}
 		else{
 			if(thePlayer == "p1"){
 				player_turn_id = 1;
-				playerTurnSpan.html("Player 1"+(parentheses? " ("+parentheses+")" : ""));
+				//playerTurnSpan.html("Player 1"+(parentheses? " ("+parentheses+")" : ""));
 				playerTurnSpan.removeClass('text-color-p2');
 				playerTurnSpan.addClass('text-color-p1');
-				if(player == "p1") yourTurn = true;
-				else yourTurn = false;
+				if(player == "p1") {
+					yourTurn = true;
+					playerTurnSpan.html(playerName+(parentheses? " ("+parentheses+")" : ""));
+				}
+				else {
+					yourTurn = false;
+					playerTurnSpan.html(opponentName+(parentheses? " ("+parentheses+")" : ""));
+				}
 			}
 			else {
 				player_turn_id = 0;
-				playerTurnSpan.html("Player 2"+(parentheses? " ("+parentheses+")" : ""));
+				//playerTurnSpan.html("Player 2"+(parentheses? " ("+parentheses+")" : ""));
 				playerTurnSpan.removeClass('text-color-p1');
 				playerTurnSpan.addClass('text-color-p2');
-				if(player == "p2") yourTurn = true;
-				else yourTurn = false;
+				if(player == "p2") {
+					yourTurn = true;
+					playerTurnSpan.html(playerName+(parentheses? " ("+parentheses+")" : ""));
+				}
+				else {
+					yourTurn = false;
+					playerTurnSpan.html(opponentName+(parentheses? " ("+parentheses+")" : ""));
+				}
 			}
 		}
 		return player_turn_id;
@@ -116,9 +140,10 @@
 			}
 			else{
 				// document.getElementById("result").innerHTML = "Player "+(player_turn_id ? 1 : 2) +" WON";
+				var opponentWon = ((player=="p1" && move.player == "p2") || ( player == "p2" && move.player == "p1") );
 				replayModal.show("Do you want to play another game?",
-					"Player "+(player_turn_id ? 1 : 2)
-					+ " ("+(((player=="p1" && move.player == "p2") || ( player == "p2" && move.player == "p1") )?"Opponent":"You")+")"
+					(opponentWon?opponentName:playerName)
+					+ " ("+(opponentWon?"Opponent":"You")+")"
 					+" WON");
 			}
 		}
@@ -182,7 +207,8 @@
 			playerName = data.name;
 			room = data.room;
 		}
-		socket.emit('opponentName',{room: room, opponent: playerName});
+		console.log('socket emit opponentName');
+		socket.emit('opponentName',{room: room, opponent: playerName, player: player});
 
 		loop(10,500,function(){
 			rollTheDice();
@@ -442,9 +468,10 @@
 			}
 			else{
 				// document.getElementById("result").innerHTML = "Player "+(player_turn_id ? 1 : 2) +" WON";
+				var opponentWon = ((player=="p1" && move.player == "p2") || ( player == "p2" && move.player == "p1") );
 				replayModal.show("Do you want to play another game?",
-					"Player "+(player_turn_id ? 1 : 2)
-					+ " ("+(((player=="p1" && move.player == "p2") || ( player == "p2" && move.player == "p1") )?"Opponent":"You")+")"
+					(opponentWon?opponentName:playerName)
+					+ " ("+(opponentWon?"Opponent":"You")+")"
 					+" WON");
 
 			}
@@ -467,8 +494,10 @@
 	  alert(data.message);
 	});
 
-	socket.on('opponentName',function(data){
+	socket.on('opponentName', function(data){
 		opponentName = data.opponent;
+		console.log('opponent:');
+		console.log(data);
 	});
 
 	var urlParams = getAllUrlParams(window.location.href);
