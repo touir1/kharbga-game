@@ -22,6 +22,16 @@ io.on('connection', function(socket){
 	  socket.emit('newGame', {name: data.name, room: 'room-'+rooms});
 	});
 
+	socket.on('joinRoom', function(data){
+		var room = io.nsps['/'].adapter.rooms[data.room];
+		if( room && room.length <= 1){
+		    socket.join(data.room);
+		}
+		else {
+		    socket.emit('err', {message: 'Sorry, The room is full!'});
+		}
+	});
+
 	/**
 	 * Connect the Player 2 to the room he requested. Show error if room full.
 	 */
@@ -62,6 +72,7 @@ io.on('connection', function(socket){
 	 * Notify the players about the victor.
 	 */
 	socket.on('gameEnded', function(data){
-	  socket.broadcast.to(data.room).emit('gameEnd', data);
+		socket.leave(data.room);
+	  	// socket.broadcast.to(data.room).emit('gameEnd', data);
 	});
 });

@@ -186,7 +186,7 @@
   overflow: auto;
 }
 
-#modal-buttons {
+.modal-buttons-class {
   float: right;
 }
 

@@ -30,7 +30,6 @@
 		
 		<div class="horizontal-center">
 			<h2 id="userHello"></h2>
-			<span id="result" class="win-result"></span>
 		</div>
 		<div id="dice-roll" class="horizontal-center">
 			<span class="dice" id="player_dice">&#9723;</span>
@@ -80,7 +79,7 @@
   		<div class="modal-content">
     		<!--<span class="close">&times;</span>-->
     		<p id="modal-message">Do you want to play first or second?</p>
-    		<table id="modal-buttons">
+    		<table id="modal-buttons" class="modal-buttons-class">
     			<tr>
     				<td><button id="start-first-btn">First</button></td>
     				<td><button id="start-second-btn">Second</button></td>
@@ -88,7 +87,25 @@
     		</table>
   		</div>
 
-</div>
+	</div>
+
+	<!-- Modal content -->
+	<div id="myModal2" class="modal">
+
+  		<!-- Modal content -->
+  		<div class="modal-content">
+    		<!--<span class="close">&times;</span>-->
+    		<span id="result" class="win-result"></span><br>
+    		<p id="modal-message2">Do you want to play another game?</p>
+    		<table id="modal-buttons2" class="modal-buttons-class">
+    			<tr>
+    				<td><button id="replay-btn">Yes</button></td>
+    				<td><button id="replay-no-btn">No</button></td>
+    			</tr>
+    		</table>
+  		</div>
+
+	</div>
 
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

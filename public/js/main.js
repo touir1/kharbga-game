@@ -6,7 +6,7 @@
 	// playerTurnSpan.removeClass('color-p2');
 	// playerTurnSpan.addClass('color-p1');
 
-	var playerName,room;
+	var playerName,room,opponentName;
 	var faceValue = 0;
 	var diceRollFinish = false;
 	var player = "";
@@ -115,7 +115,11 @@
 				nextPlayerTurn(((player=="p1" && move.player == "p2") || ( player == "p2" && move.player == "p1") )?"You":"Opponent");
 			}
 			else{
-				document.getElementById("result").innerHTML = "Player "+(player_turn_id ? 1 : 2) +" WON";
+				// document.getElementById("result").innerHTML = "Player "+(player_turn_id ? 1 : 2) +" WON";
+				replayModal.show("Do you want to play another game?",
+					"Player "+(player_turn_id ? 1 : 2)
+					+ " ("+(((player=="p1" && move.player == "p2") || ( player == "p2" && move.player == "p1") )?"Opponent":"You")+")"
+					+" WON");
 			}
 		}
 	}
@@ -150,13 +154,23 @@
 		return true;
 	}
 
-	function waiting_state(data,message){
-		$('#start-menu').addClass('hidden');
-		$('#game-starting').removeClass('hidden');
-		//$('#game-board').removeClass("hidden");
-		$('#userHello').html(message);
-		playerName = data.name;
-		room = data.room;
+	function waiting_state(data,message,replay){
+		if(!replay){
+			$('#start-menu').addClass('hidden');
+			$('#game-starting').removeClass('hidden');
+			//$('#game-board').removeClass("hidden");
+			$('#userHello').html(message);
+			playerName = data.name;
+			room = data.room;
+		}
+		else{
+			$('#start-menu').addClass('hidden');
+			$('#game-starting').removeClass('hidden');
+			//$('#game-board').removeClass("hidden");
+			$('#userHello').html(message);
+			playerName = data.name;
+			room = data.room;
+		}
 	}
 
 	function start_game(message,data){
@@ -168,6 +182,7 @@
 			playerName = data.name;
 			room = data.room;
 		}
+		socket.emit('opponentName',{room: room, opponent: playerName});
 
 		loop(10,500,function(){
 			rollTheDice();
@@ -226,6 +241,44 @@
 		nextPlayerTurn("Opponent",(player == "p1"?"p2":"p1"));
 
 		socket.emit('gameStart',{room: room, player: (player=="p1"?"p2":"p1")});
+	};
+
+	var replayModal = {
+		modal: document.getElementById('myModal2'),
+		yesButton: document.getElementById('replay-btn'),
+		noButton: document.getElementById('replay-no-btn'),
+		show: function(message,resultMessage){
+			console.log(message);
+			console.log(resultMessage);
+			if(message) document.getElementById('modal-message2').innerHTML = message;
+			if(resultMessage) document.getElementById('result').innerHTML = resultMessage;
+			this.modal.style.display = "block";
+		},
+		hide: function(){
+			this.modal.style.display = "none";
+		}
+	}
+
+	replayModal.yesButton.onclick = function(evt){
+		console.log('replay');
+		replayModal.hide();
+
+		socket.emit('gameEnded',{room: room});
+
+		var url = window.location.href.split('?')[0] 
+					+ "?player="+encodeURI(player)
+					+"&name="+encodeURI(playerName)
+					+"&room="+encodeURI(room);
+
+		$(location).attr("href", url);
+
+	};
+
+	replayModal.noButton.onclick = function(evt){
+		console.log('no replay');
+		replayModal.hide();
+
+		socket.emit('gameEnded',{room: room});
 	};
 
 	function rollTheDice(callback) {
@@ -388,7 +441,12 @@
 				nextPlayerTurn(((player=="p1" && move.player == "p2") || ( player == "p2" && move.player == "p1") )?"You":"Opponent");
 			}
 			else{
-				document.getElementById("result").innerHTML = "Player "+(player_turn_id ? 1 : 2) +" WON";
+				// document.getElementById("result").innerHTML = "Player "+(player_turn_id ? 1 : 2) +" WON";
+				replayModal.show("Do you want to play another game?",
+					"Player "+(player_turn_id ? 1 : 2)
+					+ " ("+(((player=="p1" && move.player == "p2") || ( player == "p2" && move.player == "p1") )?"Opponent":"You")+")"
+					+" WON");
+
 			}
 		}
 	});
@@ -398,8 +456,8 @@
 	 * Notify the user about either scenario and end the game. 
 	 */
 	socket.on('gameEnd', function(data){
-	  game.endGame(data.message);
-	  socket.leave(data.room);
+	  // game.endGame(data.message);
+	  // socket.leave(data.room);
 	});
 
 	/**
@@ -408,4 +466,96 @@
 	socket.on('err', function(data){
 	  alert(data.message);
 	});
+
+	socket.on('opponentName',function(data){
+		opponentName = data.opponent;
+	});
+
+	var urlParams = getAllUrlParams(window.location.href);
+	if(urlParams['name'] && urlParams['room'] && urlParams['player']){
+		// wait for now
+		var urlDecodedURI = {
+			name : decodeURI(urlParams['name']),
+			room: decodeURI(urlParams['room']),
+			player: decodeURI(urlParams['player'])
+		}
+
+		playerName = urlDecodedURI.name;
+		room = urlDecodedURI.room;
+		player = urlDecodedURI.player;
+	
+
+		if(urlDecodedURI.player == 'p1') socket.emit('joinRoom',{room: urlDecodedURI.room});
+		else socket.emit('joinGame',{name: urlDecodedURI.name, room: urlDecodedURI.room});
+
+		var message = 'Hello, ' + urlDecodedURI.name + 
+	    '. Please ask your friend to join (Game ID: ' +
+	    urlDecodedURI.room + '). Waiting for the other player...';
+
+	  	waiting_state(urlDecodedURI,message,true);
+
+		// console.log(urlDecodedURI);
+	}
+
+	function getAllUrlParams(url) {
+
+		// get query string from url (optional) or window
+	  	var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+
+	  	// we'll store the parameters here
+	  	var obj = {};
+
+	  	// if query string exists
+	  	if (queryString) {
+
+	    	// stuff after # is not part of query string, so get rid of it
+	    	queryString = queryString.split('#')[0];
+
+	    	// split our query string into its component parts
+	    	var arr = queryString.split('&');
+
+	    	for (var i=0; i<arr.length; i++) {
+	      		// separate the keys and the values
+	     		var a = arr[i].split('=');
+
+		      	// in case params look like: list[]=thing1&list[]=thing2
+		      	var paramNum = undefined;
+		      	var paramName = a[0].replace(/\[\d*\]/, function(v) {
+	        		paramNum = v.slice(1,-1);
+	        		return '';
+	      		});
+
+	      		// set parameter value (use 'true' if empty)
+	      		var paramValue = typeof(a[1])==='undefined' ? true : a[1];
+
+	      		// (optional) keep case consistent
+	      		paramName = paramName.toLowerCase();
+	      		paramValue = paramValue.toLowerCase();
+
+	      		// if parameter name already exists
+	      		if (obj[paramName]) {
+        			// convert value to array (if still string)
+        			if (typeof obj[paramName] === 'string') {
+          				obj[paramName] = [obj[paramName]];
+        			}
+	        		// if no array index number specified...
+	        		if (typeof paramNum === 'undefined') {
+	          			// put the value on the end of the array
+	          			obj[paramName].push(paramValue);
+	        		}
+	        		// if array index number specified...
+	        		else {
+	          			// put the value at that index number
+	          			obj[paramName][paramNum] = paramValue;
+	        		}
+	      		}
+	      		// if param name doesn't exist yet, set it
+	      		else {
+	        		obj[paramName] = paramValue;
+	      		}
+	    	}
+	  	}
+
+	  	return obj;
+	}
 
