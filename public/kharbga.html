@@ -18,7 +18,7 @@
 		    </ol>
 		    <h4>Create a new Game</h4>
 		    <input type="text" name="name" id="nameNew" placeholder="Enter your name" required>
-		    <button id="new">New Game</button>
+		    <button id="new">New Online Game</button> <button id="new_bot">New Bot Game</button>
 		    <br><br>
 		    <h4>Join an existing game</h4>
 		    <input type="text" name="name" id="nameJoin" placeholder="Enter your name" required>
@@ -107,12 +107,32 @@
 
 	</div>
 
+	<!-- Modal content -->
+	<div id="alertModal" class="modal">
+
+  		<!-- Modal content -->
+  		<div class="modal-content">
+    		<!--<span class="close">&times;</span>-->
+    		<p id="alertModal-message"></p>
+    		<table class="modal-buttons-class">
+    			<tr>
+    				<td><button id="alertModal-ok">Ok</button></td>
+    			</tr>
+    		</table>
+  		</div>
+
+	</div>
+
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
 	<!-- main script -->
 	<script type="text/javascript" src="public/js/configuration.js"></script>
+	<script type="text/javascript" src="public/js/Utils.js"></script>
+	<script type="text/javascript" src="public/js/SocketIOHandler.js"></script>
+	<script type="text/javascript" src="public/js/OnlineGame.js"></script>
+	<script type="text/javascript" src="public/js/BotGame.js"></script>
 	<script type="text/javascript" src="public/js/main.js"></script>
 </body>
 </html>
