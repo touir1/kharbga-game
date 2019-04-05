@@ -1,4 +1,4 @@
-var OnlineGame = function(_configuration, _gameParams){
+var OnlineGame = function(_configuration, _gameParams, replay){
 	var self = this;
 
 	var player_turn_id = 1;
@@ -15,16 +15,34 @@ var OnlineGame = function(_configuration, _gameParams){
   	var socketIOHandler = new SocketIOHandler(_configuration.serverUrl);
   	//var socket = io.connect(configuration.serverUrl);
 
-  	playerName = _gameParams.name;
+  	if(!replay){
+	  	playerName = _gameParams.name;
 
-	if(_gameParams.new) {
-		player = "p1";
-		socketIOHandler.emit('createGame', {name: playerName});
+		if(_gameParams.new) {
+			player = "p1";
+			socketIOHandler.emit('createGame', {name: playerName});
+		}
+		else {
+			player = "p2";
+			room = _gameParams.room;
+			socketIOHandler.emit('joinGame', {name: playerName, room: room});
+		}
 	}
-	else {
-		player = "p2";
+	else{
+		
+		playerName = _gameParams.name;
 		room = _gameParams.room;
-		socketIOHandler.emit('joinGame', {name: playerName, room: room});
+		player = _gameParams.player;
+	
+
+		if(_gameParams.player == 'p1') socketIOHandler.emit('joinRoom',{room: _gameParams.room});
+		else socketIOHandler.emit('joinGame',{name: _gameParams.name, room: _gameParams.room});
+
+		var message = 'Hello, ' + _gameParams.name + 
+	    '. Please ask your friend to join (Game ID: ' +
+	    _gameParams.room + '). Waiting for the other player...';
+
+	  	waiting_state(_gameParams,message,true);
 	}
 
 	var possibleMoves = {
@@ -467,29 +485,9 @@ var OnlineGame = function(_configuration, _gameParams){
 		console.log(data);
 	});
 
-	var urlParams = Utils.getAllUrlParams(window.location.href);
-	if(urlParams['name'] && urlParams['room'] && urlParams['player']){
-		// wait for now
-		var urlDecodedURI = {
-			name : decodeURI(urlParams['name']),
-			room: decodeURI(urlParams['room']),
-			player: decodeURI(urlParams['player'])
-		}
+	//var urlParams = Utils.getAllUrlParams(window.location.href);
+	//if(urlParams['name'] && urlParams['room'] && urlParams['player'] && urlParams['mode'] && urlParams['mode'] == 'online'){
+		
+	//}
 
-		playerName = urlDecodedURI.name;
-		room = urlDecodedURI.room;
-		player = urlDecodedURI.player;
-	
-
-		if(urlDecodedURI.player == 'p1') socketIOHandler.emit('joinRoom',{room: urlDecodedURI.room});
-		else socketIOHandler.emit('joinGame',{name: urlDecodedURI.name, room: urlDecodedURI.room});
-
-		var message = 'Hello, ' + urlDecodedURI.name + 
-	    '. Please ask your friend to join (Game ID: ' +
-	    urlDecodedURI.room + '). Waiting for the other player...';
-
-	  	waiting_state(urlDecodedURI,message,true);
-
-		// console.log(urlDecodedURI);
-	}
 }

@@ -3,6 +3,23 @@ $(document).ready(function(){
 
 	var Game;
 
+	var urlParams = Utils.getAllUrlParams(window.location.href);
+	if(urlParams['name'] && urlParams['room'] && urlParams['player'] && urlParams['mode']){
+
+		var urlDecodedURI = {
+			name : decodeURI(urlParams['name']),
+			room: decodeURI(urlParams['room']),
+			player: decodeURI(urlParams['player'])
+		}
+
+		if(urlParams['mode'] == 'online'){
+			Game = new OnlineGame(configuration,urlDecodedURI,true);
+		}
+		else{
+			Game = new BotGame(configuration,urlDecodedURI,true);
+		}
+	}
+
 	/**
   	* Create a new game. Emit newGame event.
    	*/
@@ -13,6 +30,15 @@ $(document).ready(function(){
       		return;
     	}
     	Game = new OnlineGame(configuration,{new: true, name: name});
+  	});
+
+ 	 $('#new_bot').on('click', function(){
+    	var name = $('#nameNew').val();
+    	if(!name){
+      		alert('Please enter your name.');
+      		return;
+    	}
+    	Game = new BotGame(configuration,{name: name});
   	});
 
   	/** 
