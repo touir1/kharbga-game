@@ -1,3 +1,3 @@
 document.configuration = {
-	"serverUrl" : "http://tn1ekip03:5000"
+	"serverUrl" : "http://dali-touir-pc:5000"
 }

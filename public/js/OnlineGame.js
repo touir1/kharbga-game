@@ -29,7 +29,7 @@ var OnlineGame = function(_configuration, _gameParams, replay){
 		}
 	}
 	else{
-		
+
 		playerName = _gameParams.name;
 		room = _gameParams.room;
 		player = _gameParams.player;
@@ -326,7 +326,8 @@ var OnlineGame = function(_configuration, _gameParams, replay){
 		var url = window.location.href.split('?')[0] 
 					+ "?player="+encodeURI(player)
 					+"&name="+encodeURI(playerName)
-					+"&room="+encodeURI(room);
+					+"&room="+encodeURI(room)
+					+"&mode=online";
 
 		$(location).attr("href", url);
 
