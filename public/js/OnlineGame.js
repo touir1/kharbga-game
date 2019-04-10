@@ -1,6 +1,8 @@
 var OnlineGame = function(_configuration, _gameParams, replay){
 	var self = this;
 
+	var gameEngine = new gameEngine();
+
 	var player_turn_id = 1;
 
 	var playerTurnSpan = $("#playerTurn");
